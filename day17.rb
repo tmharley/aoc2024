@@ -22,30 +22,24 @@ def process(instruction, operand, registers, pointer, output)
   case instruction
   when 0
     registers[0] = registers[0] / 2 ** combo_operand(operand, registers)
-    pointer + 2
   when 1
     registers[1] = registers[1] ^ operand
-    pointer + 2
   when 2
     registers[1] = combo_operand(operand, registers) % 8
-    pointer + 2
   when 3
-    registers[0].zero? ? pointer + 2 : operand
+    return registers[0].zero? ? pointer + 2 : operand
   when 4
     registers[1] = registers[1] ^ registers[2]
-    pointer + 2
   when 5
     output << combo_operand(operand, registers) % 8
-    pointer + 2
   when 6
     registers[1] = registers[0] / 2 ** combo_operand(operand, registers)
-    pointer + 2
   when 7
     registers[2] = registers[0] / 2 ** combo_operand(operand, registers)
-    pointer + 2
   else
     raise 'Invalid instruction'
   end
+  pointer + 2
 end
 
 def part_one(input)
@@ -65,7 +59,7 @@ end
 
 def part_two(input)
   lines = input.split("\n")
-  check_values = (0..7).to_a.zip([1] * 8, Array.new(8))
+  check_values = (0..7).to_a.zip([1] * 8)
   candidates = []
   starting_b = lines[1].split(': ')[1].to_i
   starting_c = lines[2].split(': ')[1].to_i
@@ -83,7 +77,7 @@ def part_two(input)
       candidates << starting_a
     elsif output[-check_digits...] == program[-check_digits...]
       (0..7).each do |n|
-        check_values.push([starting_a * 8 + n, check_digits + 1, output.dup])
+        check_values.push([starting_a * 8 + n, check_digits + 1])
       end
     end
     break if check_values.empty?
